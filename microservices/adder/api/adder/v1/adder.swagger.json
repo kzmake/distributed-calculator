@@ -1,0 +1,106 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "api/adder/v1/adder.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Adder"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/add": {
+      "post": {
+        "operationId": "Adder_Add",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Addresponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1AddRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Adder"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1AddRequest": {
+      "type": "object",
+      "properties": {
+        "operandOne": {
+          "type": "number",
+          "format": "double"
+        },
+        "operandTwo": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "v1Addresponse": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    }
+  }
+}

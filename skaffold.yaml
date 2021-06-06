@@ -1,0 +1,10 @@
+apiVersion: skaffold/v2beta18
+kind: Config
+build:
+  artifacts:
+  - image: kzmake/adder
+    context: .
+    docker:
+      dockerfile: Dockerfile
+      buildArgs:
+        SERVICE_NAME: adder
