@@ -1,0 +1,106 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "api/subtractor/v1/subtractor.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Subtractor"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/sub": {
+      "post": {
+        "operationId": "Subtractor_Sub",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Subresponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SubRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Subtractor"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1SubRequest": {
+      "type": "object",
+      "properties": {
+        "operandOne": {
+          "type": "number",
+          "format": "double"
+        },
+        "operandTwo": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "v1Subresponse": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package calculator.subtractor.v1;
+option go_package = "github.com/kzmake/distributed-calculator/microservices/subtractor/api/subtractor/v1;subtractor";
+
+import "google/api/annotations.proto";
+
+service Subtractor {
+  rpc Sub(SubRequest) returns (Subresponse) {
+    option (google.api.http) = {
+      post: "/sub"
+      body: "*"
+    };
+  }
+}
+
+message SubRequest {
+  double operand_one = 1;
+  double operand_two = 2;
+}
+
+message Subresponse {
+  double result = 1;
+}

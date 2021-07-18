@@ -19,8 +19,8 @@ import (
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc"
 
-	pb "github.com/kzmake/distributed-calculator/api/adder/v1"
 	health "github.com/kzmake/distributed-calculator/api/health/v1"
+	pb "github.com/kzmake/distributed-calculator/api/subtractor/v1"
 )
 
 type Env struct {
@@ -49,7 +49,7 @@ func newGatewayServer(ctx context.Context) (*http.Server, error) {
 	h := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 
-	if err := pb.RegisterAdderHandlerFromEndpoint(ctx, h, env.Service.Address, opts); err != nil {
+	if err := pb.RegisterSubtractorHandlerFromEndpoint(ctx, h, env.Service.Address, opts); err != nil {
 		return nil, xerrors.Errorf("Failed to register handler: %w", err)
 	}
 

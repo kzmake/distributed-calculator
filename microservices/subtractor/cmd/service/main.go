@@ -18,10 +18,10 @@ import (
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc"
 
-	pb "github.com/kzmake/distributed-calculator/api/adder/v1"
+	pb "github.com/kzmake/distributed-calculator/api/subtractor/v1"
 	"github.com/kzmake/distributed-calculator/common/health"
 
-	"github.com/kzmake/distributed-calculator/microservices/adder/handler"
+	"github.com/kzmake/distributed-calculator/microservices/subtractor/handler"
 )
 
 type Env struct {
@@ -50,7 +50,7 @@ func newGRPCServer() *grpc.Server {
 			grpc_recovery.UnaryServerInterceptor(),
 		)),
 	)
-	pb.RegisterAdderServer(s, handler.NewAdder())
+	pb.RegisterSubtractorServer(s, handler.NewSubtractor())
 
 	return s
 }

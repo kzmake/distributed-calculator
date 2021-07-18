@@ -7,7 +7,7 @@ pre:
 
 .PHONY: fmt
 fmt:
-	goimports -l -local "github.com/kzmake/distributed-calculator/microservices/adder" -w .
+	goimports -l -local "github.com/kzmake/distributed-calculator/microservices/subtractor" -w .
 
 .PHONY: lint
 lint:
