@@ -1,0 +1,16 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: calculator-adder-add-prefix
+spec:
+  addPrefix:
+    prefix: /v1.0/invoke/adder/method
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: calculator-subtractor-add-prefix
+spec:
+  addPrefix:
+    prefix: /v1.0/invoke/subtractor/method

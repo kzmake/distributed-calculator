@@ -1,0 +1,5 @@
+---
+resources:
+  - common.yaml
+  - adder.yaml
+  - subtractor.yaml

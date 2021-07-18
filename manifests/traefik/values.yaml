@@ -1,0 +1,19 @@
+logs:
+  access:
+    enabled: true
+ports:
+  http:
+    port: 58080
+    expose: true
+    exposedPort: 58080
+    protocol: TCP
+  https:
+    port: 58443
+    expose: true
+    exposedPort: 58443
+    protocol: TCP
+  grpc:
+    port: 50051
+    expose: true
+    exposedPort: 50051
+    protocol: TCP

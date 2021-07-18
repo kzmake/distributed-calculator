@@ -1,0 +1,49 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: calculator-http
+spec:
+  entryPoints:
+    - http
+    - https
+  routes:
+    - kind: Rule
+      match: Method(`POST`) && Path(`/add`)
+      middlewares:
+        - name: calculator-adder-add-prefix
+      services:
+        - name: adder-dapr
+          namespace: default
+          port: 80
+          scheme: http
+    - kind: Rule
+      match: Method(`POST`) && Path(`/sub`)
+      middlewares:
+        - name: calculator-subtractor-add-prefix
+      services:
+        - name: subtractor-dapr
+          namespace: default
+          port: 80
+          scheme: http
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: calculator-grpc
+spec:
+  entryPoints:
+    - grpc
+  routes:
+    - kind: Rule
+      match: PathPrefix(`/calculator.adder.v1`)
+      services:
+        - name: adder
+          port: 50051
+          scheme: h2c
+    - kind: Rule
+      match: PathPrefix(`/calculator.subtractor.v1`)
+      services:
+        - name: subtractor
+          port: 50051
+          scheme: h2c

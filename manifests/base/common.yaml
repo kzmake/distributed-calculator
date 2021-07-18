@@ -1,0 +1,39 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: common-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: adder-gateway-config
+data:
+  ADDRESS: 0.0.0.0:8080
+  SERVICE_ADDRESS: localhost:50051
+  SERVICE_HEALTHADDRESS: localhost:55051
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: adder-service-config
+data:
+  ADDRESS: 0.0.0.0:50051
+  HEALTHADDRESS: 0.0.0.0:55051
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: subtractor-gateway-config
+data:
+  ADDRESS: 0.0.0.0:8080
+  SERVICE_ADDRESS: localhost:50051
+  SERVICE_HEALTHADDRESS: localhost:55051
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: subtractor-service-config
+data:
+  ADDRESS: 0.0.0.0:50051
+  HEALTHADDRESS: 0.0.0.0:55051

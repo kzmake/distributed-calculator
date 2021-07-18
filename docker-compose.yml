@@ -1,44 +1,14 @@
 version: "3.7"
 
-x-sidecar:
-  sidecar: &sidecar
-    image: daprio/daprd:1.2.2
-    volumes:
-      - ./components:/components
-    depends_on:
-      - placement
-    restart: always
-
 services:
   dev:
-    image: curlimages/curl:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     command: "sh -c 'trap : SIGTERM SIGINT; sleep infinity & wait'"
-
-  # adder + grpc-gateway + dapr-sidecar
-  adder:
-    build:
-      context: .
-      dockerfile: microservices/adder/Dockerfile
-    command: "/service"
-    ports:
-      - 4000:4000 # grpc
-      - 3000:3000 # http
-      - 3500:3500 # dapr(http)
-  adder-gateway:
-    build:
-      context: .
-      dockerfile: microservices/adder/Dockerfile
-    command: "/gateway"
-    network_mode: service:adder
-    depends_on:
-      - adder
-  adder-sidecar:
-    <<: *sidecar
-    command: ./daprd -app-id adder -app-port 3000 -app-protocol http -dapr-http-port 3500 -dapr-grpc-port 50001 -components-path /components -placement-host-address placement:50005
-    network_mode: service:adder
-    depends_on:
-      - adder-gateway
-  # dapr-system
-  placement:
-    image: daprio/placement:1.2.2
-    command: "./placement"
+    environment:
+      KUBECONFIG: /go/src/app/.kube/config
+    volumes:
+      - .:/go/src/app
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    network_mode: host

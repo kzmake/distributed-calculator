@@ -1,10 +1,54 @@
-apiVersion: skaffold/v2beta18
+---
+apiVersion: skaffold/v2beta19
 kind: Config
+metadata:
+  name: traefik
+deploy:
+  helm:
+    releases:
+      - name: traefik
+        repo: https://helm.traefik.io/traefik
+        remoteChart: traefik
+        valuesFiles:
+          - manifests/traefik/values.yaml
+---
+apiVersion: skaffold/v2beta19
+kind: Config
+metadata:
+  name: dapr
+deploy:
+  helm:
+    releases:
+      - name: dapr
+        repo: https://dapr.github.io/helm-charts
+        remoteChart: dapr
+        version: "1.2"
+        namespace: dapr-system
+        createNamespace: true
+        wait: true
+---
+apiVersion: skaffold/v2beta19
+kind: Config
+metadata:
+  name: app
 build:
   artifacts:
-  - image: kzmake/adder
-    context: .
-    docker:
-      dockerfile: Dockerfile
-      buildArgs:
-        SERVICE_NAME: adder
+    - image: kzmake/adder
+      docker: { dockerfile: Dockerfile.golang, buildArgs: { SERVICE_NAME: adder } }
+    - image: kzmake/subtractor
+      docker: { dockerfile: Dockerfile.golang, buildArgs: { SERVICE_NAME: subtractor } }
+deploy:
+  kustomize:
+    paths:
+      - manifests/overlays/localhost
+portForward:
+  - resourceType: service
+    resourceName: traefik
+    namespace: default
+    port: 58080
+    localPort: 58080
+  - resourceType: service
+    resourceName: traefik
+    namespace: default
+    port: 50051
+    localPort: 50051
