@@ -6,7 +6,7 @@ option go_package = "github.com/kzmake/distributed-calculator/microservices/adde
 import "google/api/annotations.proto";
 
 service Adder {
-  rpc Add(AddRequest) returns (Addresponse) {
+  rpc Add(AddRequest) returns (AddResponse) {
     option (google.api.http) = {
       post: "/add"
       body: "*"
@@ -19,6 +19,6 @@ message AddRequest {
   double operand_two = 2;
 }
 
-message Addresponse {
+message AddResponse {
   double result = 1;
 }

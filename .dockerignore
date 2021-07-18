@@ -1,0 +1,8 @@
+manifests/
+components/
+third_party/
+hack/
+
+.kube/
+.envrc
+.env

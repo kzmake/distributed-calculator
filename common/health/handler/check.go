@@ -3,7 +3,7 @@ package handler
 import (
 	"context"
 
-	pb "github.com/kzmake/distributed-calculator/common/health/api/health/v1"
+	pb "github.com/kzmake/distributed-calculator/api/health/v1"
 )
 
 var Status = pb.HealthCheckResponse_NOT_SERVING.Enum()

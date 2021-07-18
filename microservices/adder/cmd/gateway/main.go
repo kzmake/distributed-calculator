@@ -12,35 +12,49 @@ import (
 	ginlogger "github.com/gin-contrib/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	health "github.com/kzmake/distributed-calculator/common/health/api/health/v1"
+	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc"
 
-	pb "github.com/kzmake/distributed-calculator/microservices/adder/api/adder/v1"
+	health "github.com/kzmake/distributed-calculator/api/health/v1"
+
+	pb "github.com/kzmake/distributed-calculator/api/adder/v1"
 )
 
-const (
-	gatewayAddress = ":3000"
-	serviceAddress = "localhost:4000"
-	healthAddress  = "localhost:5000"
-)
+type Env struct {
+	Address string `default:"0.0.0.0:8080"`
+	Service struct {
+		Address       string `default:"localhost:50051"`
+		HealthAddress string `default:"localhost:55051"`
+	}
+}
+
+const prefix = "GATEWAY"
+
+var env Env
 
 func init() {
 	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stdout}).With().Timestamp().Logger()
+
+	if err := envconfig.Process(prefix, &env); err != nil {
+		log.Fatal().Msgf("%+v", err)
+	}
+
+	log.Debug().Msgf("%+v", env)
 }
 
 func newGatewayServer(ctx context.Context) (*http.Server, error) {
 	h := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 
-	if err := pb.RegisterAdderHandlerFromEndpoint(ctx, h, serviceAddress, opts); err != nil {
+	if err := pb.RegisterAdderHandlerFromEndpoint(ctx, h, env.Service.Address, opts); err != nil {
 		return nil, xerrors.Errorf("Failed to register handler: %w", err)
 	}
 
-	if err := health.RegisterHealthHandlerFromEndpoint(ctx, h, healthAddress, opts); err != nil {
+	if err := health.RegisterHealthHandlerFromEndpoint(ctx, h, env.Service.HealthAddress, opts); err != nil {
 		return nil, xerrors.Errorf("Failed to register handler: %w", err)
 	}
 
@@ -59,13 +73,13 @@ func newGatewayServer(ctx context.Context) (*http.Server, error) {
 				Str("user_agent", c.Request.UserAgent()).
 				Logger()
 		}),
-		ginlogger.WithSkipPath([]string{"*"}),
+		ginlogger.WithSkipPath([]string{"/healthz"}),
 	))
 	r.Use(gin.Recovery())
 
 	r.Any("/*any", gin.WrapH(h))
 
-	return &http.Server{Addr: gatewayAddress, Handler: r}, nil
+	return &http.Server{Addr: env.Address, Handler: r}, nil
 }
 
 func run() error {

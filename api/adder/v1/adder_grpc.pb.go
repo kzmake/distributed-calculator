@@ -18,7 +18,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AdderClient interface {
-	Add(ctx context.Context, in *AddRequest, opts ...grpc.CallOption) (*Addresponse, error)
+	Add(ctx context.Context, in *AddRequest, opts ...grpc.CallOption) (*AddResponse, error)
 }
 
 type adderClient struct {
@@ -29,8 +29,8 @@ func NewAdderClient(cc grpc.ClientConnInterface) AdderClient {
 	return &adderClient{cc}
 }
 
-func (c *adderClient) Add(ctx context.Context, in *AddRequest, opts ...grpc.CallOption) (*Addresponse, error) {
-	out := new(Addresponse)
+func (c *adderClient) Add(ctx context.Context, in *AddRequest, opts ...grpc.CallOption) (*AddResponse, error) {
+	out := new(AddResponse)
 	err := c.cc.Invoke(ctx, "/calculator.adder.v1.Adder/Add", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (c *adderClient) Add(ctx context.Context, in *AddRequest, opts ...grpc.Call
 // All implementations must embed UnimplementedAdderServer
 // for forward compatibility
 type AdderServer interface {
-	Add(context.Context, *AddRequest) (*Addresponse, error)
+	Add(context.Context, *AddRequest) (*AddResponse, error)
 	mustEmbedUnimplementedAdderServer()
 }
 
@@ -50,7 +50,7 @@ type AdderServer interface {
 type UnimplementedAdderServer struct {
 }
 
-func (UnimplementedAdderServer) Add(context.Context, *AddRequest) (*Addresponse, error) {
+func (UnimplementedAdderServer) Add(context.Context, *AddRequest) (*AddResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Add not implemented")
 }
 func (UnimplementedAdderServer) mustEmbedUnimplementedAdderServer() {}

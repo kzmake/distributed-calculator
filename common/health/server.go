@@ -3,7 +3,7 @@ package health
 import (
 	"google.golang.org/grpc"
 
-	pb "github.com/kzmake/distributed-calculator/common/health/api/health/v1"
+	pb "github.com/kzmake/distributed-calculator/api/health/v1"
 	"github.com/kzmake/distributed-calculator/common/health/handler"
 )
 

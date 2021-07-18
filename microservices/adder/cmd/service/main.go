@@ -10,7 +10,7 @@ import (
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	"github.com/kzmake/distributed-calculator/common/health"
+	"github.com/kelseyhightower/envconfig"
 	grpc_zerolog "github.com/philip-bui/grpc-zerolog"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -18,17 +18,30 @@ import (
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc"
 
-	pb "github.com/kzmake/distributed-calculator/microservices/adder/api/adder/v1"
+	"github.com/kzmake/distributed-calculator/common/health"
+
+	pb "github.com/kzmake/distributed-calculator/api/adder/v1"
+
 	"github.com/kzmake/distributed-calculator/microservices/adder/handler"
 )
 
-const (
-	serviceAddress = "0.0.0.0:4000"
-	healthAddress  = "0.0.0.0:5000"
-)
+type Env struct {
+	Address       string `default:"0.0.0.0:50051"`
+	HealthAddress string `default:"0.0.0.0:55051"`
+}
+
+const prefix = "SERVICE"
+
+var env Env
 
 func init() {
 	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stdout}).With().Timestamp().Logger()
+
+	if err := envconfig.Process(prefix, &env); err != nil {
+		log.Fatal().Msgf("%+v", err)
+	}
+
+	log.Debug().Msgf("%+v", env)
 }
 
 func newGRPCServer() *grpc.Server {
@@ -52,7 +65,7 @@ func run() error {
 
 	grpcS := newGRPCServer()
 	g.Go(func() error {
-		lis, err := net.Listen("tcp", serviceAddress)
+		lis, err := net.Listen("tcp", env.Address)
 		if err != nil {
 			return xerrors.Errorf("failed to listen: %w", err)
 		}
@@ -64,7 +77,7 @@ func run() error {
 
 	healthS := health.NewHealthServer()
 	g.Go(func() error {
-		lis, err := net.Listen("tcp", healthAddress)
+		lis, err := net.Listen("tcp", env.HealthAddress)
 		if err != nil {
 			return xerrors.Errorf("failed to listen: %w", err)
 		}

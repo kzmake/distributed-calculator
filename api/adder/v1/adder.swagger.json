@@ -23,7 +23,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Addresponse"
+              "$ref": "#/definitions/v1AddResponse"
             }
           },
           "default": {
@@ -93,7 +93,7 @@
         }
       }
     },
-    "v1Addresponse": {
+    "v1AddResponse": {
       "type": "object",
       "properties": {
         "result": {
