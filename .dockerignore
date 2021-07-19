@@ -1,6 +1,5 @@
 manifests/
 components/
-hack/
 
 .kube/
 .envrc

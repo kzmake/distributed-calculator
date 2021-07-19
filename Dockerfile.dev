@@ -1,14 +1,17 @@
 FROM golang:1.16
 
 RUN apt-get -qq update && \
-    apt-get -qq install -y make git curl apt-transport-https gnupg ca-certificates lsb-release python3 moreutils dos2unix && \
+    apt-get -qq install -y make git unzip curl apt-transport-https gnupg ca-certificates lsb-release python3 moreutils dos2unix && \
     rm -rf /var/lib/apt/lists/*
+
+# install tools
+COPY hack hack
+RUN cd hack/tools && make install && rm -rf vendor
 
 # install docker
 ARG DOCKER_VERSION=20.10.7
 RUN curl -Lo docker.tgz "https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz" && \
-    tar --extract --file docker.tgz --strip-components 1 --directory /usr/local/bin/ && \
-    rm docker.tgz
+    tar --extract --file docker.tgz --strip-components 1 --directory /usr/local/bin/ && rm docker.tgz
 
 # install kind
 ARG KIND_VERSION=0.11.1
@@ -34,6 +37,13 @@ RUN curl -sS https://webinstall.dev/k9s | /bin/bash && ln -s /root/.local/bin/k9
 # install dapr
 ARG DAPR_VERSION=1.2.0
 RUN curl -sS https://raw.githubusercontent.com/dapr/cli/master/install/install.sh | /bin/bash -s ${DAPR_VERSION}
+
+# install protoc
+ARG PROTOC_VERSION=3.17.3
+RUN curl -sSfL -o protoc.zip https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip && \
+    unzip protoc.zip -d /usr/local && chmod -R 4755 /usr/local/bin/protoc && chmod -R 4755 /usr/local/include/google && rm protoc.zip
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.26
+RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1
 
 # install grpcurl
 RUN go get github.com/fullstorydev/grpcurl/cmd/grpcurl
